@@ -4,32 +4,81 @@
   <meta charset="UTF-8">
   <title>Интерактивная лекция по геометрии: Предмет, форма, развертки</title>
   <!-- Подключаем шрифт Roboto -->
-  <link href="img/1.webp" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* Общие стили */
     body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 0 20px;
-      background: linear-gradient(135deg, #f7f7f7 0%, #e0e0e0 100%);
-      color: #333;
+      font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
     }
+	.controls {
+        margin-bottom: 10px;
+    }
+	.cube-container {
+    width: 400px;
+    height: 400px;
+    perspective: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Правильное позиционирование */
+    z-index: 1;
+    margin: 0 auto;
+}
+
+	.cube-wrapper {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease-out;
+    cursor: grab;
+}
+	.container {
+    max-width: 1200px; /* Максимальная ширина контента */
+    width: 100%; /* Заполняем доступное пространство */
+    padding: 20px; /* Отступы вокруг контента */
+    box-sizing: border-box; /* Включаем отступы в размер контейнера */
+}
+
+    .face {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: rgba(52, 152, 219, 0.8);
+        border: 1px solid #2980b9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        transform-origin: center;
+    }
+
+    #front  { transform: translateZ(0px); }
+    #back   { transform: translateX(200px); }
+    #left   { transform: translateX(-100px); }
+    #right  { transform: translateX(100px); }
+    #top    { transform: translateY(-100px); }
+    #bottom { transform: translateY(100px); }
+
     header, section {
-      max-width: 900px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.6s ease-out;
-    }
-    header.visible, section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+header.visible, section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
     h1, h2, h3 {
       color: #2c3e50;
       margin-bottom: 15px;
@@ -62,6 +111,39 @@
     }
     .feedback.visible {
       opacity: 1;
+    }
+    /* Collapsible блок для заданий */
+    .collapsible {
+      background-color: #eee;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 16px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .active, .collapsible:hover {
+      background-color: #ccc;
+    }
+    .content {
+      padding: 0 10px;
+      display: none;
+      overflow: hidden;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    /* Стили для интерактивных определений */
+    .definition {
+      display: none;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-left: 3px solid #3498db;
+      margin: 10px 0;
+      border-radius: 4px;
     }
     /* Стили для изображений */
     .diagram {
@@ -102,54 +184,10 @@
       left: 0;
       z-index: 1;
     }
-    /* Стили для куба */
-    .controls {
-      margin-bottom: 10px;
-    }
-
-    .cube-container {
-      width: 300px;
-      height: 300px;
-      perspective: 800px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .cube-wrapper {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.3s ease-out;
-      cursor: grab;
-    }
-
-    .face {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: rgba(52, 152, 219, 0.8);
-      border: 1px solid #2980b9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      transform-origin: center;
-    }
-
-    /* Начальное расположение (развертка крестом) */
-    #front  { transform: translateZ(0px); }
-    #back   { transform: translateX(200px); }
-    #left   { transform: translateX(-100px); }
-    #right  { transform: translateX(100px); }
-    #top    { transform: translateY(-100px); }
-    #bottom { transform: translateY(100px); }
   </style>
 </head>
 <body>
-
+	<div class = "container">
   <!-- Заголовок и введение -->
   <header class="animate">
     <h1>Лекция: «Понятие о предмете и его форме. Законы формообразования геометрических тел. Общие сведения о развертках. Развертка поверхностей геометрических тел.»</h1>
@@ -157,86 +195,513 @@
     <p>
       Геометрия играет фундаментальную роль в понимании окружающего мира. Знание формы предметов и закономерностей их построения помогает решать задачи в математике, инженерии, архитектуре и дизайне. В этой лекции мы рассмотрим основные понятия, методы построения разверток и практические задания для закрепления материала.
     </p>
-    <img src="img/2.webp" alt="Диаграмма форм и предметов" class="diagram">
+    <img src="img/1.webp" alt="Диаграмма форм и предметов" class="diagram">
   </header>
 
-  <!-- Секция с кубом и ползунком -->
-  <section>
-    <h2>Сборка куба из развертки</h2>
-    <div class="controls">
-      <label>Сборка куба:</label>
-      <input type="range" id="slider" min="0" max="1" step="0.01" value="0">
-    </div>
-    <div class="cube-container">
-      <div class="cube-wrapper" id="cubeWrapper">
+  <!-- 1. Понятие о предмете и его форме -->
+  <section class="animate">
+    <h2>1. Понятие о предмете и его форме</h2>
+		<div class="controls">
+    <label for="slider">Сборка куба:</label>
+<input type="range" id="slider" min="0" max="1" step="0.01" value="0">
+
+</div>
+
+<div class="cube-container">
+    <div class="cube-wrapper" id="cubeWrapper">
         <div class="face" id="front">F</div>
         <div class="face" id="back">B</div>
         <div class="face" id="left">L</div>
         <div class="face" id="right">R</div>
         <div class="face" id="top">T</div>
         <div class="face" id="bottom">Bo</div>
-      </div>
+    </div>
+</div>
+
+    <h3>1.1. Определения и основные понятия</h3>
+    <p>
+      <strong>Предмет</strong> – материальный объект, обладающий размерами, формой и структурой.
+      <button class="btn" onclick="toggleDefinition('def-predmet')">Показать определение</button>
+    </p>
+    <div id="def-predmet" class="definition">
+      <p>Предмет – это объект, который можно измерить и описать, обладающий формой и размерами.</p>
+    </div>
+    <p>
+      <strong>Форма</strong> – совокупность геометрических характеристик объекта: контуры, пропорции, симметрия и структура поверхности.
+      <button class="btn" onclick="toggleDefinition('def-forma')">Показать определение</button>
+    </p>
+    <div id="def-forma" class="definition">
+      <p>Форма – визуальное представление объекта, определяемое его контурами и пропорциями, что придаёт эстетическую и функциональную ценность.</p>
+    </div>
+    
+    <h3>Быстрый вопрос</h3>
+    <p>
+      <strong>Вопрос:</strong> Какие характеристики определяют форму предмета?
+    </p>
+    <button class="btn" onclick="quickQuiz('quiz1', 'Верно! Форма определяется контурами, пропорциями и симметрией.', true)">Контуры, пропорции и симметрия</button>
+    <button class="btn" onclick="quickQuiz('quiz1', 'Неверно. Попробуйте ещё раз!', false)">Размер и цвет</button>
+    <div id="quiz1" class="feedback"></div>
+    
+    <img src="img/2.webp" alt="Схема геометрической формы" class="diagram">
+  </section>
+  
+  <!-- 2. Законы формообразования геометрических тел -->
+  <section class="animate">
+    <h2>2. Законы формообразования геометрических тел</h2>
+    
+    <h3>2.1. Основные принципы</h3>
+    <p>
+      Формообразование – процесс создания объёмных тел по определённым закономерностям:
+    </p>
+    <ul>
+      <li><strong>Принцип симметрии:</strong> Объекты обладают осевой, центральной или радиальной симметрией.</li>
+      <li><strong>Эквивалентность граней:</strong> Все грани правильного многогранника имеют одинаковую форму и размеры.</li>
+      <li><strong>Непрерывность поверхности:</strong> При построении развертки поверхность объекта должна быть связной.</li>
+    </ul>
+    
+    <h3>Быстрый вопрос</h3>
+    <p>
+      <strong>Вопрос:</strong> Какой принцип упрощает построение многогранников?
+    </p>
+    <button class="btn" onclick="quickQuiz('quiz2', 'Верно! Принцип симметрии существенно упрощает построение.', true)">Принцип симметрии</button>
+    <button class="btn" onclick="quickQuiz('quiz2', 'Неверно. Попробуйте ещё раз!', false)">Принцип пропорциональности</button>
+    <div id="quiz2" class="feedback"></div>
+    
+    <img src="img/3.webp" alt="Схема симметрии многогранника" class="diagram">
+    
+    <h3>2.2. Формальные закономерности</h3>
+    <p>
+      <strong>Эйлерова формула:</strong> Для выпуклых многогранников выполняется V - E + F = 2.
+    </p>
+    <p>
+      <strong>Правила построения правильных тел:</strong> Платоновы тела характеризуются равенством всех граней, рёбер и углов.
+    </p>
+    
+    <h3>2.3. Примеры формообразования</h3>
+    <ul>
+      <li><strong>Куб:</strong> Образуется из шести квадратных граней, обладает трёхосевой симметрией.</li>
+      <li><strong>Пирамида:</strong> Имеет многоугольное основание и боковые треугольные грани, сходящиеся в вершине.</li>
+      <li><strong>Цилиндр:</strong> Тело с двумя круглыми основаниями и боковой криволинейной поверхностью.</li>
+    </ul>
+  </section>
+  
+  <!-- 3. Общие сведения о развертках -->
+  <section class="animate">
+    <h2>3. Общие сведения о развертках</h2>
+    
+    <h3>3.1. Понятие развертки</h3>
+    <p>
+      Развертка – способ плоского изображения поверхности объёмного тела через «разгибание» его боковых граней. Этот метод позволяет анализировать площадь, упрощать черчение и визуализировать структуру объекта.
+    </p>
+    <button class="btn" onclick="toggleDefinition('def-razvertka')">Показать примеры разверток</button>
+    <div id="def-razvertka" class="definition">
+      <ul>
+        <li><strong>Куб:</strong> Стандартная развертка – «крест».</li>
+        <li><strong>Пирамида:</strong> Боковые треугольники, развёрнутые вокруг основания.</li>
+        <li><strong>Цилиндр:</strong> Боковая поверхность – прямоугольник, основания – отдельно.</li>
+      </ul>
+    </div>
+    <img src="img/4.webp" alt="Примеры разверток" class="diagram">
+    
+    <h3>3.2. Значение разверток</h3>
+    <p>
+      Развертки имеют образовательное, практическое и исследовательское значение, помогая визуализировать объёмные объекты, проводить расчёты и оптимизировать производство.
+    </p>
+  </section>
+  
+  <!-- 4. Развертка поверхностей геометрических тел -->
+  <section class="animate">
+    <h2>4. Развертка поверхностей геометрических тел</h2>
+    
+    <h3>4.1. Методика построения развертки</h3>
+    <p>
+      Для построения развертки выбираются линии разреза, сохраняются пропорции и обеспечивается непрерывность поверхности.
+    </p>
+    <button class="btn" onclick="quickQuiz('quiz4', 'Верно! Выбор линий разреза – ключевой этап построения развертки.', true)">Почему линии разреза важны?</button>
+    <div id="quiz4" class="feedback"></div>
+    
+    <h3>4.2. Построение разверток для различных тел</h3>
+    <ul>
+      <li><strong>Куб:</strong> Варианты развертки: «крест», расположение в два ряда.</li>
+      <li><strong>Пирамида:</strong> Боковые треугольные грани разворачиваются вокруг основания.</li>
+      <li><strong>Цилиндр:</strong> Боковая поверхность превращается в прямоугольник, круговые основания – отдельно.</li>
+    </ul>
+    
+    <h3>4.3. Ошибки и особенности</h3>
+    <p>
+      Неправильный выбор линий разреза может привести к искажению пропорций и невозможности восстановления фигуры.
+    </p>
+    <img src="img/5.webp" alt="Схема развертки" class="diagram">
+  </section>
+  
+  <!-- 5. Практическое применение и методы исследования разверток -->
+  <section class="animate">
+    <h2>5. Практическое применение и методы исследования разверток</h2>
+    
+    <h3>5.1. Применение в инженерном и техническом черчении</h3>
+    <p>
+      Развертки помогают оптимизировать раскрой материалов, моделировать объекты и создавать точные чертежи.
+    </p>
+    
+    <h3>5.2. Топологический и графовый подход</h3>
+    <p>
+      Методы топологии позволяют свести задачу построения развертки к раскрашиванию графа или нахождению эйлерова пути.
+    </p>
+    
+    <h3>5.3. Вычислительные аспекты</h3>
+    <p>
+      Из разверток можно вычислить площади, периметры и оценить симметрию объектов, что важно для инженерных расчётов.
+    </p>
+    <img src="img/6.webp" alt="График вычислительных аспектов" class="diagram">
+  </section>
+  
+  <!-- 6. Исторический аспект и развитие темы -->
+  <section class="animate">
+    <h2>6. Исторический аспект и развитие темы</h2>
+    
+    <h3>6.1. История изучения разверток</h3>
+    <p>
+      Изучение разверток началось с древнегреческих математиков, таких как Евклид, а в эпоху Возрождения они активно применялись в архитектурном черчении и декоративно-прикладном искусстве.
+    </p>
+    
+    <h3>6.2. Влияние на современное образование и практику</h3>
+    <p>
+      Современные методы изучения разверток опираются на достижения топологии, компьютерной графики и инженерного моделирования – знания, обязательные для курсов по геометрии.
+    </p>
+    <img src="img/7.webp" alt="Историческое изображение разверток" class="diagram">
+  </section>
+  
+  <!-- 7. Задания по уровням сложности -->
+  <section class="animate">
+    <h2>7. Задания по уровням сложности</h2>
+    <p>
+      Ниже приведён перечень письменных заданий для закрепления материала. Задания выполняются с использованием геометрических инструментов (линейка, циркуль, карандаш и т.д.).
+    </p>
+    <h3>Уровень 1 (Базовые задания)</h3>
+    <ol>
+      <li>Определите термины «предмет» и «форма». Приведите примеры геометрических тел с регулярной формой (например, куб, сфера, пирамида).</li>
+      <li>Нарисуйте развертку куба (вариант «крест») и подпишите все грани, объясните выбор линий разреза.</li>
+      <li>Изобразите развертку прямоугольного параллелепипеда с обозначением размеров граней и линий разреза.</li>
+      <li>Сравните два варианта развертки куба, опишите их сходства и различия.</li>
+    </ol>
+    <h3>Уровень 2 (Задания средней сложности)</h3>
+    <ol>
+      <li>Нарисуйте развертку правильной треугольной призмы с двумя треугольными основаниями и тремя боковыми гранями.</li>
+      <li>Постройте развертку правильной пирамиды с квадратным основанием, обозначив боковые грани и основание.</li>
+      <li>Сравните две развертки: корректную для куба и вариант с ошибкой в выборе разрезов.</li>
+      <li>Для куба с ребром 4 см рассчитайте суммарную площадь всех граней по развертке.</li>
+    </ol>
+    <h3>Уровень 3 (Сложные задания)</h3>
+    <ol>
+      <li>Нарисуйте развертку цилиндра: боковая поверхность превращается в прямоугольник, а разверните одно из круговых оснований отдельно.</li>
+      <li>Проанализируйте схему развертки, составленную из многоугольников. Определите корректность развертки и предложите улучшения.</li>
+      <li>Выберите многогранник (например, октаэдр) и проверьте выполнение Эйлеровой формулы V - E + F = 2 по его развертке.</li>
+      <li>Сформулируйте алгоритм построения развертки для любого выпуклого многогранника, приведите примеры для двух фигур.</li>
+      <li>Предложите оригинальный вариант развертки для куба и объясните его преимущества.</li>
+      <li>Опишите, как принцип симметрии влияет на выбор линий разреза в развертках различных тел.</li>
+      <li>Изготовьте модель объекта по разработанной развертке (бумага, ножницы) и опишите процесс, выявленные трудности и способы их решения.</li>
+    </ol>
+    <button class="collapsible">Показать/Скрыть подробное описание заданий</button>
+    <div class="content">
+      <p>
+        Задания выполняются на бумаге с использованием геометрических инструментов. Подробное описание каждого задания поможет разобраться в методах построения разверток и развить пространственное мышление.
+      </p>
     </div>
   </section>
-
+  
+  <!-- 8. Практическое задание: Мини-инструмент для черчения -->
+  <section class="animate" id="drawing-section">
+    <h2>8. Практическое задание: Мини-инструмент для черчения</h2>
+    <p>
+      Используйте инструмент ниже для выполнения практических заданий. Вы можете выбрать режим «Свободное рисование» для эскизов или режим «Прямая линия» для построения ровных линий с привязкой к сетке.
+    </p>
+    <div id="toolbar">
+      <label for="toolSelect">Инструмент:</label>
+      <select id="toolSelect">
+        <option value="free">Свободное рисование</option>
+        <option value="line">Прямая линия</option>
+      </select>
+      <label for="colorPicker">Цвет:</label>
+      <input type="color" id="colorPicker" value="#000000">
+      <label for="lineWidth">Толщина линии:</label>
+      <input type="number" id="lineWidth" value="2" min="1" max="10" style="width:50px;">
+      <button class="btn" onclick="clearCanvas()">Очистить холст</button>
+    </div>
+    <!-- Контейнер с двумя холстами: один для сетки, второй для рисования -->
+    <div id="drawingContainer">
+      <canvas id="gridCanvas" width="800" height="400"></canvas>
+      <canvas id="drawingCanvas" width="800" height="400"></canvas>
+    </div>
+  </section>
+  </div>
   <script>
-    const slider = document.getElementById("slider");
-    const cubeWrapper = document.getElementById("cubeWrapper");
+    // Анимация при прокрутке
+    // Сделаем все секции видимыми сразу
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('header, section').forEach(elem => {
+        elem.classList.add('visible');
+    });
+});
 
-    const faces = {
-      front:  document.getElementById("front"),
-      back:   document.getElementById("back"),
-      left:   document.getElementById("left"),
-      right:  document.getElementById("right"),
-      top:    document.getElementById("top"),
-      bottom: document.getElementById("bottom"),
-    };
-
-    function lerp(start, end, t) {
-      return start + (end - start) * t;
+    
+    // Функция для быстрых вопросов
+    function quickQuiz(id, message, correct) {
+      const feedback = document.getElementById(id);
+      feedback.textContent = message;
+      feedback.style.color = correct ? 'green' : 'red';
+      feedback.classList.add('visible');
     }
-
-    function updateCube(t) {
-      faces.front.style.transform  = `translateZ(${lerp(0, 50, t)}px)`;
-      faces.back.style.transform   = `translateX(${lerp(200, 0, t)}px) rotateY(${lerp(0, 180, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
-      faces.left.style.transform   = `translateX(${lerp(-100, 0, t)}px) rotateY(${lerp(0, -90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
-      faces.right.style.transform  = `translateX(${lerp(100, 0, t)}px) rotateY(${lerp(0, 90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
-      faces.top.style.transform    = `translateY(${lerp(-100, 0, t)}px) rotateX(${lerp(0, -90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
-      faces.bottom.style.transform = `translateY(${lerp(100, 0, t)}px) rotateX(${lerp(0, 90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+    
+    // Переключение отображения определений
+    function toggleDefinition(id) {
+      const elem = document.getElementById(id);
+      elem.style.display = (elem.style.display === 'block') ? 'none' : 'block';
     }
-
-    slider.addEventListener("input", (e) => {
-      updateCube(parseFloat(e.target.value));
+    
+    // Collapsible блок для заданий
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling;
+        content.style.display = (content.style.display === "block") ? "none" : "block";
+      });
+    }
+    
+    // --- Мини-инструмент для черчения ---
+    const gridCanvas = document.getElementById('gridCanvas');
+    const gridCtx = gridCanvas.getContext('2d');
+    const drawingCanvas = document.getElementById('drawingCanvas');
+    const ctx = drawingCanvas.getContext('2d');
+    
+    // Настройки сетки
+    const gridSize = 20;
+    function drawGrid() {
+      gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+      gridCtx.strokeStyle = '#ddd';
+      gridCtx.lineWidth = 1;
+      for (let x = 0; x < gridCanvas.width; x += gridSize) {
+        gridCtx.beginPath();
+        gridCtx.moveTo(x, 0);
+        gridCtx.lineTo(x, gridCanvas.height);
+        gridCtx.stroke();
+      }
+      for (let y = 0; y < gridCanvas.height; y += gridSize) {
+        gridCtx.beginPath();
+        gridCtx.moveTo(0, y);
+        gridCtx.lineTo(gridCanvas.width, y);
+        gridCtx.stroke();
+      }
+    }
+    drawGrid();
+    
+    // Функция привязки координат к сетке
+    function snapToGrid(x, y) {
+      return {
+        x: Math.round(x / gridSize) * gridSize,
+        y: Math.round(y / gridSize) * gridSize
+      };
+    }
+    
+    // Глобальные переменные для рисования
+    let currentTool = document.getElementById('toolSelect').value;
+    let drawing = false;
+    let startX, startY;
+    let drawnLines = []; // Для режима линии: массив линий {x1, y1, x2, y2, color, lineWidth}
+    
+    document.getElementById('toolSelect').addEventListener('change', function(e) {
+      currentTool = e.target.value;
+      drawing = false;
     });
-
-    updateCube(0); // Установить начальное состояние
-
-    // --- Вращение куба мышью ---
-    let isDragging = false;
-    let lastX, lastY;
-    let rotX = 0, rotY = 0;
-
-    cubeWrapper.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      lastX = e.clientX;
-      lastY = e.clientY;
+    
+    // Обработчики событий для рисования
+    drawingCanvas.addEventListener('mousedown', function(e) {
+      const rect = drawingCanvas.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      if (currentTool === 'line') {
+        const snapped = snapToGrid(x, y);
+        drawing = true;
+        startX = snapped.x;
+        startY = snapped.y;
+      } else if (currentTool === 'free') {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      }
     });
-
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      let deltaX = e.clientX - lastX;
-      let deltaY = e.clientY - lastY;
-      rotY += deltaX * 0.5;
-      rotX -= deltaY * 0.5;
-      cubeWrapper.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      lastX = e.clientX;
-      lastY = e.clientY;
+    
+    drawingCanvas.addEventListener('mousemove', function(e) {
+      const rect = drawingCanvas.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      if (drawing && currentTool === 'line') {
+        // В режиме линии: показать предварительную линию
+        const snapped = snapToGrid(x, y);
+        redrawDrawingCanvas();
+        ctx.strokeStyle = document.getElementById('colorPicker').value;
+        ctx.lineWidth = parseInt(document.getElementById('lineWidth').value);
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(snapped.x, snapped.y);
+        ctx.stroke();
+      } else if (drawing && currentTool === 'free') {
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = document.getElementById('colorPicker').value;
+        ctx.lineWidth = parseInt(document.getElementById('lineWidth').value);
+        ctx.stroke();
+      }
     });
-
-    document.addEventListener("mouseup", () => {
-      isDragging = false;
+    
+    drawingCanvas.addEventListener('mouseup', function(e) {
+      if (drawing && currentTool === 'line') {
+        const rect = drawingCanvas.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        const snapped = snapToGrid(x, y);
+        drawnLines.push({
+          x1: startX,
+          y1: startY,
+          x2: snapped.x,
+          y2: snapped.y,
+          color: document.getElementById('colorPicker').value,
+          lineWidth: parseInt(document.getElementById('lineWidth').value)
+        });
+        redrawDrawingCanvas();
+      }
+      drawing = false;
     });
+    
+    drawingCanvas.addEventListener('mouseleave', function(e) {
+      drawing = false;
+    });
+	// Обработчики для рисования на мобильных устройствах
+drawingCanvas.addEventListener('touchstart', function(e) {
+    const rect = drawingCanvas.getBoundingClientRect();
+    let x = e.touches[0].clientX - rect.left;
+    let y = e.touches[0].clientY - rect.top;
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    e.preventDefault(); // Предотвращаем стандартное поведение (например, зумирование)
+});
+
+drawingCanvas.addEventListener('touchmove', function(e) {
+    if (!drawing) return;
+    const rect = drawingCanvas.getBoundingClientRect();
+    let x = e.touches[0].clientX - rect.left;
+    let y = e.touches[0].clientY - rect.top;
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = document.getElementById('colorPicker').value;
+    ctx.lineWidth = parseInt(document.getElementById('lineWidth').value);
+    ctx.stroke();
+    e.preventDefault(); // Предотвращаем стандартное поведение
+});
+
+drawingCanvas.addEventListener('touchend', function() {
+    drawing = false;
+});
+
+    
+    // Функция перерисовки рисунка (для режима линии)
+    function redrawDrawingCanvas() {
+      ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+      for (let line of drawnLines) {
+        ctx.strokeStyle = line.color;
+        ctx.lineWidth = line.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(line.x1, line.y1);
+        ctx.lineTo(line.x2, line.y2);
+        ctx.stroke();
+      }
+    }
+    
+    // Функция очистки холста (и сохранённого рисунка)
+    function clearCanvas() {
+      drawnLines = [];
+      ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    }
+ const slider = document.getElementById("slider");
+const cubeWrapper = document.getElementById("cubeWrapper");
+
+const faces = {
+    front: document.getElementById("front"),
+    back: document.getElementById("back"),
+    left: document.getElementById("left"),
+    right: document.getElementById("right"),
+    top: document.getElementById("top"),
+    bottom: document.getElementById("bottom"),
+};
+
+function lerp(start, end, t) {
+    return start + (end - start) * t;
+}
+
+function updateCube(t) {
+    faces.front.style.transform = `translateZ(${lerp(0, 50, t)}px)`;
+    faces.back.style.transform = `translateX(${lerp(200, 0, t)}px) rotateY(${lerp(0, 180, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+    faces.left.style.transform = `translateX(${lerp(-100, 0, t)}px) rotateY(${lerp(0, -90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+    faces.right.style.transform = `translateX(${lerp(100, 0, t)}px) rotateY(${lerp(0, 90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+    faces.top.style.transform = `translateY(${lerp(-100, 0, t)}px) rotateX(${lerp(0, -90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+    faces.bottom.style.transform = `translateY(${lerp(100, 0, t)}px) rotateX(${lerp(0, 90, t)}deg) translateZ(${lerp(0, 50, t)}px)`;
+}
+
+slider.addEventListener("input", (e) => {
+    updateCube(parseFloat(e.target.value));
+});
+
+updateCube(0);
+
+// Вращение куба мышью
+let isDragging = false;
+let lastX, lastY;
+let rotX = 0, rotY = 0;
+
+cubeWrapper.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    let deltaX = e.clientX - lastX;
+    let deltaY = e.clientY - lastY;
+    rotY += deltaX * 0.5;
+    rotX -= deltaY * 0.5;
+    cubeWrapper.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.clientX;
+    lastY = e.clientY;
+});
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+});
+
+cubeWrapper.addEventListener("touchstart", (e) => {
+    isDragging = true;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    let deltaX = e.touches[0].clientX - lastX;
+    let deltaY = e.touches[0].clientY - lastY;
+    rotY += deltaX * 0.5;
+    rotX -= deltaY * 0.5;
+    cubeWrapper.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend", () => {
+    isDragging = false;
+});
+window.onload = function() {
+    updateCube(0); // Устанавливаем начальное состояние при загрузке
+};
+
   </script>
-
 </body>
 </html>
